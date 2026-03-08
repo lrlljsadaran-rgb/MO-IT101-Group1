@@ -66,3 +66,5 @@ The employee information includes:
 -The system displays employee details along with their computed payroll information.
 
 PROJECT PLAN LINK:
+
+https://docs.google.com/spreadsheets/d/1ZcgHoZ2nyqqXSyVbdUa3h6pLU1KOtvXNNVhWx1taiTM/edit?usp=sharing
