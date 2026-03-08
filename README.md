@@ -1,15 +1,17 @@
 # MO-IT101-Group1
-Members and Contributions:
+## | Member | Contributions |
 
-Kayel Niccolo Astrera-
+| Kayel Niccolo Astrera | Business Requirements and Project Plan, Employee Details Presentation |
 
-Maria Leorrie Dipus-
+| Maria Leorrie Dipus | Business Requirements and Project Plan, Payroll Calculation and Display |
 
-Jerymy Malaga-
+| Jerymy Malaga | Use Case, Payroll Calculation and Display |
 
-Levi Ledesma Sadaran-
+| Levi Ledesma Sadaran | Wireframe Design, Employee Details Presentation |
 
-PROGRAM DETAILS:
+---
+
+## PROGRAM DETAILS:
 
 The MotorPH Payroll System is a simple Java-based payroll processing program that reads employee and attendance data from CSV/Excel files and calculates employee salaries based on hours worked.
 
@@ -65,6 +67,8 @@ The employee information includes:
 
 -The system displays employee details along with their computed payroll information.
 
-PROJECT PLAN LINK:
+---
+
+## PROJECT PLAN LINK:
 
 https://docs.google.com/spreadsheets/d/1ZcgHoZ2nyqqXSyVbdUa3h6pLU1KOtvXNNVhWx1taiTM/edit?usp=sharing
