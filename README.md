@@ -72,3 +72,45 @@ The employee information includes:
 ## PROJECT PLAN LINK:
 
 https://docs.google.com/spreadsheets/d/1ZcgHoZ2nyqqXSyVbdUa3h6pLU1KOtvXNNVhWx1taiTM/edit?usp=sharing
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.filehandling;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+
+
+/**
+ *
+ * @author MARIA LEORRIE
+ */
+
+
+public class AllEmployee {
+ public static void main(String[] args) {
+     
+//Display Basic Info (All Employee)
+     String filePath = "Employee Data.csv";
+     try (BufferedReader br = new BufferedReader(new FileReader(filePath))){
+         String line;
+         br.readLine();
+         while ((line = br.readLine()) != null) {
+             String[] parts = line.split(",");
+             String employeeId = parts[0];
+             String fullName = parts[1] + ", " + parts [2];
+             String birthday = parts[3];
+          
+             System.out.println("Employee #: " + employeeId);
+             System.out.println("Full Name: " + fullName);
+             System.out.println("Birthday: " + birthday);
+
+               } 
+     }  catch (IOException e){
+              System.out.println("Error reading items.txt");    
+                 }
+}
