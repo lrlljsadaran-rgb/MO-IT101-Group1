@@ -13,7 +13,7 @@
 
 ## PROGRAM DETAILS:
 
-The MotorPH Payroll System is a simple Java-based payroll processing program that reads employee and attendance data from CSV/Excel files and calculates employee salaries based on hours worked.
+The MotorPH Payroll System is a simple payroll processing program that reads employee and attendance data from CSV/Excel files and calculates employee salaries based on hours worked.
 
 The system performs the following functions:
 
