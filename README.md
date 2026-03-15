@@ -236,7 +236,8 @@ Example code:
 Example code:
 
     philhealth = (totalGross * 0.03) / 2;
-    SSS
+   
+ ### SSS
     
     SSS contributions are calculated using salary brackets.
     
