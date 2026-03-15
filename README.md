@@ -239,9 +239,9 @@ Example code:
    
  ### SSS
     
-    SSS contributions are calculated using salary brackets.
-    
-    Example logic:
+SSS contributions are calculated using salary brackets.
+
+Example logic:
     
     if (totalGross < 3250)
     {
