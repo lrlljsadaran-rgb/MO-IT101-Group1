@@ -1,13 +1,13 @@
 # MO-IT101-Group1
 ## | Member | Contributions |
 
-| Kayel Niccolo Astrera | Business Requirements and Project Plan, Employee Details Presentation |
+| Kayel Niccolo Astrera | Business Requirements and Project Plan, Employee Details Presentation, log in & log out |
 
-| Maria Leorrie Dipus | Business Requirements and Project Plan, Payroll Calculation and Display |
+| Maria Leorrie Dipus | Business Requirements and Project Plan, Payroll Calculation and Display, QA Testing |
 
-| Jerymy Malaga | Use Case, Payroll Calculation and Display |
+| Jerymy Malaga | Use Case, Payroll Calculation and Display, Basic Payroll System |
 
-| Levi Ledesma Sadaran | Wireframe Design, Employee Details Presentation |
+| Levi Ledesma Sadaran | Wireframe Design, Employee Details Presentation, Semi-Monthly Salary |
 
 ---
 
