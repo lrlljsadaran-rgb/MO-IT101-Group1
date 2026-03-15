@@ -17,58 +17,304 @@ The MotorPH Payroll System is a simple payroll processing program that reads emp
 
 The system performs the following functions:
 
-**1. Login Authentication**
--The program asks the user to enter a username and password.
+1. Login authentication 
 
-Valid usernames are:
+2. Employee record lookup 
 
--employee
+3. Attendance processing 
 
--payroll_staff
+4. Gross salary calculation
 
-Password: 12345
+5. Government deductions computation
 
-If the credentials are incorrect, the program displays "Incorrect username and/or password" and terminates.
+6. Net salary calculation 
 
-**2. Employee Data Reading**
--The system reads employee information from a provided CSV/Excel file.
+7. The program processes payroll from June to December.
 
-The employee information includes:
+### Program Structure:
 
--Employee Number
+The program contains several main methods that perform specific payroll tasks:
+ 
+    MotorPhPayrollSystem.java
 
--Employee Name
+### Key methods include:
 
--Birthday
+1. main()
 
--Hourly Rate
+2. convertToHours()
 
-**3. Attendance Processing**
+3. getOneEmployee()
 
--Attendance records are read from the attendance file.
+4. oneEmployeeSalary()
 
--Only records from June to December are processed.
+5. calculateNet2()
 
-**4. Hours Worked Calculation**
+6. getMonth()
 
--Only working hours between 8:00 AM and 5:00 PM are counted.
+7. allMonthSalary()
 
--Extra hours outside this range are not included in the total hours worked.
+## 1. Login Authentication (Main Method)
 
-**5. Salary Computation**
+The program starts by requesting a username and password.
+     
+    System.out.print("Enter username: ");
+    String username = sc.nextLine();
 
--Total Hours Worked = Time Out − Time In (based on rules provided)
+    System.out.print("Enter password: ");
+    String password = sc.nextLine();
 
--Gross Salary = Total Hours Worked × Hourly Rate
+### The program validates the login credentials.    
 
--Net Salary = Gross Salary − Total Deductions
+ Valid users:
 
-**6. Payroll Output**
+    employee
+    payroll_staff
 
--The system displays employee details along with their computed payroll information.
+ Password:  
 
----
+    12345
 
-## PROJECT PLAN LINK:
+If the credentials are incorrect, the program terminates.
 
-https://docs.google.com/spreadsheets/d/1ZcgHoZ2nyqqXSyVbdUa3h6pLU1KOtvXNNVhWx1taiTM/edit?usp=sharing
+    System.out.println("Incorrect username and/or password.");
+    System.exit(0);
+
+## Payroll Staff Menu
+
+If the user logs in as payroll_staff, the following menu appears:
+
+    1. One Employee
+    2. All employee
+    3. Exit the program
+
+### Option 1
+
+Displays salary computation for a specific employee.
+
+    String empNumber = getOneEmployee();
+    for(int month=6; month<=12; month++)
+    {
+      oneEmployeeSalary(empNumber, month);
+    }
+
+### Option 2
+
+Displays salary reports for all employees.
+
+    allMonthSalary();
+
+##  4. Reading Employee Data   
+
+Employee data is read from a CSV file using BufferedReader.
+    
+    BufferedReader reader =
+    new BufferedReader(new FileReader(employeeFile));
+
+The program extracts the following information:
+
+Employee Number
+
+Name
+
+Birthday
+
+Hourly Rate
+
+Example code:
+
+    String[] employeeRecord = line.split(",");
+    hourlyRate = Double.parseDouble(data[data.length - 1]);
+
+## 5. Reading Attendance Records
+
+Attendance records are stored in another CSV file.
+
+Fields used:
+
+    Employee ID
+    Date
+    Log In
+    Log Out
+
+Example code:
+
+    BufferedReader attReader =
+    new BufferedReader(new FileReader(attendanceFile));    
+
+## 6. Time Conversion Method
+
+The program converts time into decimal hours.
+
+Example:
+
+    08:30 → 8.5
+
+Method used:
+
+    public static double convertToHours(String time)
+    {
+        String[] parts = time.split(":");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = Integer.parseInt(parts[1]);
+    
+        return hours + (minutes / 60.0);
+    }    
+## 7. Working Hour Rules
+
+The system applies the following company rules:
+
+    if (timeIn < 8.0) timeIn = 8.0;
+    if (timeOut > 17.0) timeOut = 17.0;
+
+Meaning:
+<pre>
+Rule                                 Description
+
+Earliest log-in	                       8:00 AM
+
+Latest log-out	                       5:00 PM</pre>
+
+Hours worked are calculated using:
+
+    hoursWorked = timeOut - timeIn
+
+## 8. Payroll Cut-Off System
+
+Salary is divided into two payroll periods.
+
+<pre>
+Cut-Off                                 Days
+1st Cut-off                            	Day 1 – 15
+2nd Cut-off	                            Day 16 – End of Month</pre>
+
+Code logic:
+
+    if (day <= 15)
+    {
+        firstCutoff += dailyPay;
+    }
+    else
+    {
+        secondCutoff += dailyPay;
+    }
+
+## 9. Gross Salary Calculation
+
+Daily salary is computed using:
+
+    dailyPay = hoursWorked * hourlyRate;
+
+First cut-off:
+
+    firstCutoff += dailyPay;
+
+Second cut-off:
+
+    secondCutoff += dailyPay;
+
+## 10. Government Deductions
+
+### The program calculates the following deductions.
+
+### Pag-IBIG
+
+  1% – 2% of salary
+  Maximum contribution: 100
+
+Example code:
+
+    pagibig = totalGross * 0.02;
+    if (pagibig > 100)
+    {
+        pagibig = 100;
+    }
+
+### PhilHealth
+
+3% of salary
+
+Example code:
+
+    philhealth = (totalGross * 0.03) / 2;
+    SSS
+    
+    SSS contributions are calculated using salary brackets.
+    
+    Example logic:
+    
+    if (totalGross < 3250)
+    {
+        sssDeduction = 135;
+    }
+    else
+    {
+        bracket computation
+    }
+
+### Withholding Tax
+
+Tax is calculated using BIR tax brackets.
+
+Example:
+
+    if (taxable < 20832)
+    {
+        tax = 0;
+    }
+    else
+    {
+        tax = taxable * taxRate;
+    }    
+
+## 11. Net Salary Calculation
+
+The program calculates the total deductions.
+
+    totalDeductions = pagibig + philhealth + sss + tax;
+
+Net salary:
+
+    netPay = grossSalary - totalDeductions;
+
+The system displays:
+
+    Total Gross
+    Taxable Income
+    Pagibig
+    Philhealth
+    SSS
+    Tax
+    Total Deductions
+    Net Pay
+
+## 12. Monthly Salary Report
+
+Payroll staff can generate reports for all employees from June to December.
+
+Example code:
+
+    for(int month=6; month<=12; month++)
+    {
+        oneEmployeeSalary(employeeID, month);
+    }
+
+## This produces a monthly payroll summary.
+
+How to Run the Program
+
+Compile the program:
+
+    javac MotorPhPayrollSystem.java
+
+Run the program:
+
+    java MotorPhPayrollSystem
+    
+
+
+
+
+
+
+
+## PROJECT PLAN LINK: [GROUP 1 Payroll System Project Plan ](https://docs.google.com/spreadsheets/d/1ZcgHoZ2nyqqXSyVbdUa3h6pLU1KOtvXNNVhWx1taiTM/edit?usp=sharing)
