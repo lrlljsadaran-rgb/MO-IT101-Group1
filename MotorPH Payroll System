@@ -1,3 +1,4 @@
+
 package MotorPhPayrollSystem;
 
 import java.io.BufferedReader;
@@ -74,7 +75,7 @@ public class MotorPhPayrollSystem
                     {
                         case 1:
                             String empNumber= getOneEmployee(); //empNumber =Employee Number                            
-                            for(int M=6;M<=12; M++) {oneEmployeeSalary(empNumber,M);}
+                            for(int month=6;month<=12; month++) {oneEmployeeSalary(empNumber,month);}
                             break;                            
                         case 2:
                             allMonthSalary();                      
@@ -185,7 +186,7 @@ public class MotorPhPayrollSystem
           totalDeductions=deductions+tax;
           netpay2=gross2-( totalDeductions);   
         
-          //print out
+          //print out of all the deuctions and computation of 2nd cut-off Net.
         System.out.println("Total Gross:"+String.format("%.2f",totalGross));
         System.out.println("Taxable Income:"+String.format("%.2f",taxable));
         System.out.println("Deductions:");
@@ -195,30 +196,23 @@ public class MotorPhPayrollSystem
         System.out.println("\tTax:"+String.format("%.2f",tax));
         System.out.println("Total Deductions:"+String.format("%.2f",totalDeductions));  
         System.out.println("Net pay 2nd Cut-off:"+String.format("%.2f",netpay2));
-        
-         
-
-      
+           
         return netpay2;   
     }
-    
-    
-    
-    
+
     //Method for getting specific employee
     public static String getOneEmployee()
     {
-          //Employee Scaner    
+          //Employee Scanner    
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter Employee #: ");
         String employeeNumber = sc.nextLine(); 
         
          //Employee Record
-      try {
+      try 
+        {
             BufferedReader reader = new BufferedReader(new FileReader(employeeFile));
-
             String line;
-
             while((line = reader.readLine())!= null)
             {
                 String[] employeeRecord=line.split(",");
@@ -230,142 +224,31 @@ public class MotorPhPayrollSystem
                  System.out.println("Birthday:"+employeeRecord[3]);
                 }
             }   
-
             reader.close();
-
-        } catch(IOException e){
-            System.out.println("Error reading file");
+        } 
+      catch(IOException e)
+        {
+         System.out.println("Error reading file");
         }
       
- 
-         
-           
-     return employeeNumber; 
+      return employeeNumber; 
     }
     
- 
-    
-
-//Employee List
-    public static void allEmployee()
+    //Method for getting specific employee salary.
+    public static void oneEmployeeSalary(String EmployeeNo, int Month)
     {
-        String[] employeeID = new String[40];
-        String[] employeeName = new String[40];
-        String[] employeeBday = new String[40];
-        double[] hourlyRate = new double[40];
-        double[] firstCutoff = new double[40];
-        double[] secondCutoff = new double[40];
-        double firstCutOffNetpay = 0;
-
-        int count = 0;
-                 try {
-
-            // READ EMPLOYEE FILE
-            BufferedReader empReader = new BufferedReader(new FileReader(employeeFile));
-            empReader.readLine();
-
-            String line;
-            
-
-            while ((line = empReader.readLine()) != null) 
-            {
-
-                String[] data = line.split(",");
-                employeeID[count] = data[0];
-                employeeName[count] = data[2] + " " + data[1];
-                employeeBday[count] =data[3];
-                // Always take the LAST column for hourly rate
-                hourlyRate[count] = Double.parseDouble(data[data.length - 1]);
-                count++;
-            }
-            empReader.close();
-            // READ ATTENDANCE FILE
-            BufferedReader attReader = new BufferedReader(new FileReader(attendanceFile));
-            attReader.readLine();
-            while ((line = attReader.readLine()) != null) {
-
-                String[] data = line.split(",");
-
-                if(data.length < 6) continue;
-                
-                String empID = data[0];
-                String date = data[3];
-                String logIn = data[4];
-                String logOut = data[5];
-
-                double timeIn = convertToHours(logIn);
-                double timeOut = convertToHours(logOut);
-
-                // Apply company rule
-                if (timeIn < 8.0) timeIn = 8.0;
-                if (timeOut > 17.0) timeOut = 17.0;
-
-                double hoursWorked = timeOut - timeIn;
-                if (hoursWorked < 0) hoursWorked = 0;
-
-                String[] dateParts = date.split("/");
-                int month = Integer.parseInt(dateParts[0]);
-                int day = Integer.parseInt(dateParts[1]);
-                
-                if(month != 6) continue;
-
-                for (int i = 0; i < count; i++) {
-
-                    if (empID.equals(employeeID[i])) {
-
-                        double dailyPay = hoursWorked * hourlyRate[i];
-
-                        if (day <= 15) {
-                            firstCutoff[i] += dailyPay;
-                        } else {
-                            secondCutoff[i] += dailyPay;
-                        }
-
-                        break;
-                    }
-                }
-            }
-
-            attReader.close();
-
-            // DISPLAY RESULTS
-            for (int i = 0; i < count; i++) {
-                System.out.println("------------------------");
-                System.out.println("Employee #: " + employeeID[i]);
-                System.out.println("Name: " + employeeName[i]);
-                System.out.println("Bidrthday: "+employeeBday[i]);
-                System.out.printf("1st Cutoff Gross Salary: %.2f\n", firstCutoff[i]);
-                firstCutOffNetpay=firstCutoff[i];
-                System.out.printf("1st Cutoff Net Salary: %.2f\n", firstCutOffNetpay);
-                System.out.printf("2nd Cutoff Gross Salary: %.2f\n", secondCutoff[i]);
-                calculateNet2(firstCutoff[i], secondCutoff[i]);
-                System.out.println("----------------------------");
-            }
-
-        } catch (IOException e) {
-            System.out.println("Error reading file.");
-        }
-    }
-    
-    //Method for getting specific employee salary
-    public static void oneEmployeeSalary(String EmployeeNo, int Month){
-
         double hourlyRate = 0;
-
         double firstCutoff = 0;
         double secondCutoff = 0;
         double firstCutOffNetpay = 0;
-
         int count = 0;
-                 try {
-
+                
+        try 
+        {
             // READ EMPLOYEE FILE
             BufferedReader empReader = new BufferedReader(new FileReader(employeeFile));
             empReader.readLine();
-
             String line;
-            
-
             while ((line = empReader.readLine()) != null) 
             {
                 String[] data = line.split(",");
@@ -382,18 +265,14 @@ public class MotorPhPayrollSystem
             BufferedReader attReader = new BufferedReader(new FileReader(attendanceFile));
             attReader.readLine();
              int month =0;
-            while ((line = attReader.readLine()) != null) {
-
+            while ((line = attReader.readLine()) != null) 
+            {
                 String[] data = line.split(",");
-
                 if(data.length < 6) continue;
-                
                 String empID = data[0];
                 String date = data[3];
                 String logIn = data[4];
                 String logOut = data[5];
-                
-              
 
                 double timeIn = convertToHours(logIn);
                 double timeOut = convertToHours(logOut);
@@ -406,51 +285,46 @@ public class MotorPhPayrollSystem
                 if (hoursWorked < 0) hoursWorked = 0;
 
                 String[] dateParts = date.split("/");
-               month = Integer.parseInt(dateParts[0]);
+                month = Integer.parseInt(dateParts[0]);
                 int day = Integer.parseInt(dateParts[1]);
                 
                 if(month != Month) continue;
 
-                
-              
-
-                    if (empID.equals(EmployeeNo)) {
-
+                    if (empID.equals(EmployeeNo)) 
+                    { 
                         double dailyPay = hoursWorked * hourlyRate;
-
-                        if (day <= 15) {
-                            firstCutoff += dailyPay;
-                        } else {
-                            secondCutoff += dailyPay;
-                        }
-
-                  
+                        if (day <= 15) 
+                        {
+                         firstCutoff += dailyPay;
+                        }else 
+                            {
+                             secondCutoff += dailyPay;
+                            }
                     }
-                
             }
-
             attReader.close();
 
             // DISPLAY RESULTS
             
                 //System.out.println("Hourly Rate: "+ hourlyRate );
                 System.out.println("----------------------------");
-                System.out.println("Month:"+getMonth(Month));
+                System.out.println("Month:"+getMonth(Month));             
                 System.out.printf("1st Cutoff Gross Salary: %.2f\n", firstCutoff);
-                firstCutOffNetpay=firstCutoff;
+               
+                firstCutOffNetpay=firstCutoff; //First Cut-off Net pay
+                
                 System.out.printf("1st Cutoff Net Salary: %.2f\n", firstCutOffNetpay);
                 System.out.printf("2nd Cutoff Gross Salary: %.2f\n", secondCutoff);
                 calculateNet2(firstCutoff, secondCutoff);
                 System.out.println("----------------------------");
-            
-
         } catch (IOException e) {
             System.out.println("Error reading file.");
         }
     }
-    
-    public static String getMonth(int Month){
-        
+     
+     //Method for getting the specific Month name.
+    public static String getMonth(int Month)
+    {    
         if(Month==6)
         { return "June";}
         else if(Month==7){ return "July";}
@@ -462,8 +336,9 @@ public class MotorPhPayrollSystem
         else return "";
     }
     
-    public static void allMonthSalary(){
-        
+    //Method for showing the salary from June to December.
+    public static void allMonthSalary()
+    {
         String[] employeeID = new String[40];
         String[] employeeName = new String[40];
         String[] employeeBday = new String[40];
@@ -471,48 +346,34 @@ public class MotorPhPayrollSystem
         double[] firstCutoff = new double[40];
         double[] secondCutoff = new double[40];
         double firstCutOffNetpay = 0;
-
         int count = 0;
-                 try {
-
-            // READ EMPLOYEE FILE
-            BufferedReader empReader = new BufferedReader(new FileReader(employeeFile));
-            empReader.readLine();
-
-            String line;
-            
-
-            while ((line = empReader.readLine()) != null) {
-
-                String[] data = line.split(",");
-
-                employeeID[count] = data[0];
-                employeeName[count] = data[2] + " " + data[1];
-                employeeBday[count] =data[3];
-
-                // Always take the LAST column for hourly rate
-                hourlyRate[count] = Double.parseDouble(data[data.length - 1]);
-                 System.out.println("******************");
-                 System.out.println("Employee No.:"+data[0]);
-                 System.out.println( "Employee Name:"+data[1]+", "+data[2]);
-                 System.out.println("Birthday:"+data[3]);
-                for(int M=6;M<=12; M++) {oneEmployeeSalary(data[0],M);}
-                count++;
-            }
-
-            empReader.close();
-
-            // READ ATTENDANCE FILE
-           
-
-        } catch (IOException e) {
-            System.out.println("Error reading file.");
+        try 
+       {
+           // READ EMPLOYEE FILE
+           BufferedReader empReader = new BufferedReader(new FileReader(employeeFile));
+           empReader.readLine();       
+           String line;
+           while ((line = empReader.readLine()) != null) 
+           {
+               String[] data = line.split(",");
+               employeeID[count] = data[0];
+               employeeName[count] = data[2] + " " + data[1];
+               employeeBday[count] =data[3];
+               // Always take the LAST column for hourly rate
+               hourlyRate[count] = Double.parseDouble(data[data.length - 1]);
+                System.out.println("******************");
+                System.out.println("Employee No.:"+data[0]);
+                System.out.println( "Employee Name:"+data[1]+", "+data[2]);
+                System.out.println("Birthday:"+data[3]);
+               for(int month=6;month<=12; month++) {oneEmployeeSalary(data[0],month);}
+               count++;
+           }
+           empReader.close();
+       } 
+       catch (IOException e) 
+        {
+         System.out.println("Error reading file.");
         }
-    
     }
-        
-
-    
- 
 }
 
