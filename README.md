@@ -301,15 +301,7 @@ Example code:
 
 ## This produces a monthly payroll summary.
 
-How to Run the Program
 
-Compile the program:
-
-    javac MotorPhPayrollSystem.java
-
-Run the program:
-
-    java MotorPhPayrollSystem
     
 
 
