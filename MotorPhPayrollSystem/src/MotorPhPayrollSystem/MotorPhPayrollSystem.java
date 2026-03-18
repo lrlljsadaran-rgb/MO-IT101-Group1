@@ -1,0 +1,379 @@
+
+package MotorPhPayrollSystem;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
+
+
+
+public class MotorPhPayrollSystem 
+{
+        static String employeeFile = "C:\\Users\\malag\\OneDrive\\Documents\\NetBeansProjects\\SemiMonthlySalary\\src\\MotorPhPayrollSystem\\MotorPH_Employee Data - Employee Details.csv";
+        static String attendanceFile = "C:\\Users\\malag\\OneDrive\\Documents\\NetBeansProjects\\SemiMonthlySalary\\src\\MotorPhPayrollSystem\\MotorPH_Employee Data - Attendance Record.csv";
+    
+    public static void main(String[] args)
+    {
+
+        // Step 1: Ask for username and password
+        try (Scanner sc = new Scanner(System.in)) 
+        {
+            // Step 1: Ask for username and password
+            System.out.print("Enter username: ");
+            String username = sc.nextLine();
+            System.out.print("Enter password: ");
+            String password = sc.nextLine();
+            
+            // Step 2: Validate credentials
+            if (!(password.equals("12345") &&
+                (username.equals("employee") || username.equals("payroll_staff")))) 
+                {
+                    System.out.println("Incorrect username and/or password.");
+                    System.exit(0); // terminate program
+                }
+            
+            // Step 3: Proceed based on username
+            if (username.equals("employee"))
+                { 
+                
+                    System.out.println("\nOptions:");
+                    System.out.println("1. Enter your employee number");
+                    System.out.println("2. Exit the program");
+                    System.out.print("Choose an option: ");
+                    int choice = sc.nextInt();
+                    sc.nextLine(); // consume newline
+                    switch (choice) 
+                    {
+                        case 1:
+                            getOneEmployee();                      
+                            break;
+
+
+                        case 2:
+                            System.out.println("Program terminated.");
+                            System.exit(0);
+                        default:
+                            System.out.println("Invalid option. Try again.");
+                            break;
+                    }
+                
+                } 
+            else if (username.equals("payroll_staff")) 
+                {
+                    // You can expand payroll_staff logic here
+                    System.out.println("Welcome, payroll staff!");                
+                    System.out.println("\nOptions:");
+                    System.out.println("1. One Employee");
+                    System.out.println("2. All employee");
+                    System.out.println("3. Exit the program");
+                    System.out.print("Choose an option: ");
+                    
+                    int choice = sc.nextInt();
+                    sc.nextLine(); // consume newline
+                    switch (choice) 
+                    {
+                        case 1:
+                            String empNumber= getOneEmployee(); //empNumber =Employee Number                            
+                            for(int month=6;month<=12; month++) {oneEmployeeSalary(empNumber,month);}
+                            break;                            
+                        case 2:
+                            allMonthSalary();                      
+                            break;
+                        case 3:
+                            System.out.println("Program terminated.");
+                            System.exit(0);
+                        default:
+                            System.out.println("Invalid option. Try again.");
+                            break;
+                    }
+
+                    System.out.println("Program terminated.");
+                } 
+        }  
+    }
+          //Time Convertion Method 
+    public static double convertToHours(String time) 
+    {
+        String[] parts = time.split(":");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = Integer.parseInt(parts[1]);
+        return hours + (minutes / 60.0);
+    }
+    
+        //2nd Cut-off Net Method
+    public static double calculateNet2(double gross1, double gross2)
+    {
+        double netpay2;
+        double deductions;
+        double totalDeductions;
+        double pagibig;
+        double philhealth; 
+        double totalGross = gross1+gross2;
+        double sssDeduction; 
+        double  tax;
+        double taxable;
+      
+        //Pagibig Deductions
+        if(totalGross>=1000 && totalGross<=1500)
+        {
+        if((totalGross*.01)>=100)
+           {
+              pagibig= 100;
+            }
+         else pagibig= totalGross*.01;
+        }
+        else if (totalGross>1501)
+        {
+         if((totalGross*.02)>=100)
+           {
+             pagibig= 100;
+            }
+         else pagibig= totalGross*.02;
+        }
+        else pagibig=0;
+        
+        //Philhealth Deductions 
+        if(totalGross==10000){philhealth= (totalGross*.03)/2;}
+        else if (totalGross>=10000.01 && totalGross<=59999.99){philhealth=(totalGross*.03)/2;}
+        else if (totalGross>=60000){philhealth= totalGross*.03;}
+        else philhealth= 0;
+        
+        
+        //SSS Deduction
+        if (totalGross < 3250) 
+        {
+            sssDeduction = 135;
+        } else if (totalGross >= 24750)
+        {
+            sssDeduction = 1125;
+        } else {
+            int bracket = (int)((totalGross - 3250) / 500);
+            sssDeduction = 157.5 + (bracket * 22.5);
+        }
+           //combined deduction of pagibig,philhealth and sss
+        deductions=pagibig+philhealth+sssDeduction; 
+     
+          //taxable income after the total gross deductions    
+        taxable= totalGross-deductions;
+
+           //Tax   
+         if(taxable<20832)
+        {
+        tax= 0;
+        }
+        else if (taxable>=20833 && taxable<33333)
+        {
+            tax= (taxable-2833)*.20;
+        }
+        else if (taxable>=33333 && taxable<66667)
+        {
+            tax= 2500+((taxable-3333)*.20);
+        }
+        else if (taxable>=66667 && taxable<166667)
+        {
+            tax= 10833+((taxable-66667)*.30);
+        }
+        else if (taxable>=166667 && taxable<666667)
+        {
+            tax= 40833.33+((taxable-166667)*.32);
+        } 
+        else 
+            tax= 2008333.33+((taxable-666667)*.35);
+         
+        
+            //2nd Cut-off Netpay   
+          totalDeductions=deductions+tax;
+          netpay2=gross2-( totalDeductions);   
+        
+          //print out of all the deuctions and computation of 2nd cut-off Net.
+        System.out.println("Total Gross:"+String.format("%.2f",totalGross));
+        System.out.println("Taxable Income:"+String.format("%.2f",taxable));
+        System.out.println("Deductions:");
+        System.out.println("\tPagibig:"+String.format("%.2f",pagibig));
+        System.out.println("\tPhilhealth:"+String.format("%.2f",philhealth));
+        System.out.println("\tSSS:"+String.format("%.2f",sssDeduction));
+        System.out.println("\tTax:"+String.format("%.2f",tax));
+        System.out.println("Total Deductions:"+String.format("%.2f",totalDeductions));  
+        System.out.println("Net pay 2nd Cut-off:"+String.format("%.2f",netpay2));
+           
+        return netpay2;   
+    }
+
+    //Method for getting specific employee
+    public static String getOneEmployee()
+    {
+          //Employee Scanner    
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter Employee #: ");
+        String employeeNumber = sc.nextLine(); 
+        
+         //Employee Record
+      try 
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(employeeFile));
+            String line;
+            while((line = reader.readLine())!= null)
+            {
+                String[] employeeRecord=line.split(",");
+                if(employeeRecord[0].equals(employeeNumber))
+                {
+                 System.out.println("******************");
+                 System.out.println("Employee No.:"+employeeRecord[0]);
+                 System.out.println( "Employee Name:"+employeeRecord[1]+", "+employeeRecord[2]);
+                 System.out.println("Birthday:"+employeeRecord[3]);
+                }
+            }   
+            reader.close();
+        } 
+      catch(IOException e)
+        {
+         System.out.println("Error reading file");
+        }
+      
+      return employeeNumber; 
+    }
+    
+    //Method for getting specific employee salary.
+    public static void oneEmployeeSalary(String EmployeeNo, int Month)
+    {
+        double hourlyRate = 0;
+        double firstCutoff = 0;
+        double secondCutoff = 0;
+        double firstCutOffNetpay = 0;
+        int count = 0;
+                
+        try 
+        {
+            // READ EMPLOYEE FILE
+            BufferedReader empReader = new BufferedReader(new FileReader(employeeFile));
+            empReader.readLine();
+            String line;
+            while ((line = empReader.readLine()) != null) 
+            {
+                String[] data = line.split(",");
+            if (data[0].equals(EmployeeNo))
+                {
+                // Always take the LAST column for hourly rate
+                hourlyRate = Double.parseDouble(data[data.length - 1]);     
+                }
+            }
+
+            empReader.close();
+
+            // READ ATTENDANCE FILE
+            BufferedReader attReader = new BufferedReader(new FileReader(attendanceFile));
+            attReader.readLine();
+             int month =0;
+            while ((line = attReader.readLine()) != null) 
+            {
+                String[] data = line.split(",");
+                if(data.length < 6) continue;
+                String empID = data[0];
+                String date = data[3];
+                String logIn = data[4];
+                String logOut = data[5];
+
+                double timeIn = convertToHours(logIn);
+                double timeOut = convertToHours(logOut);
+
+                // Apply company rule
+                if (timeIn < 8.0) timeIn = 8.0;
+                if (timeOut > 17.0) timeOut = 17.0;
+
+                double hoursWorked = timeOut - timeIn;
+                if (hoursWorked < 0) hoursWorked = 0;
+
+                String[] dateParts = date.split("/");
+                month = Integer.parseInt(dateParts[0]);
+                int day = Integer.parseInt(dateParts[1]);
+                
+                if(month != Month) continue;
+
+                    if (empID.equals(EmployeeNo)) 
+                    { 
+                        double dailyPay = hoursWorked * hourlyRate;
+                        if (day <= 15) 
+                        {
+                         firstCutoff += dailyPay;
+                        }else 
+                            {
+                             secondCutoff += dailyPay;
+                            }
+                    }
+            }
+            attReader.close();
+
+            // DISPLAY RESULTS
+            
+                //System.out.println("Hourly Rate: "+ hourlyRate );
+                System.out.println("----------------------------");
+                System.out.println("Month:"+getMonth(Month));             
+                System.out.printf("1st Cutoff Gross Salary: %.2f\n", firstCutoff);
+               
+                firstCutOffNetpay=firstCutoff; //First Cut-off Net pay
+                
+                System.out.printf("1st Cutoff Net Salary: %.2f\n", firstCutOffNetpay);
+                System.out.printf("2nd Cutoff Gross Salary: %.2f\n", secondCutoff);
+                calculateNet2(firstCutoff, secondCutoff);
+                System.out.println("----------------------------");
+        } catch (IOException e) {
+            System.out.println("Error reading file.");
+        }
+    }
+     
+     //Method for getting the specific Month name.
+    public static String getMonth(int Month)
+    {    
+        if(Month==6)
+        { return "June";}
+        else if(Month==7){ return "July";}
+        else if(Month==8){ return "August";}
+        else if(Month==9){ return "September";}
+        else if(Month==10){ return "October";}
+        else if(Month==11){ return "November";}
+        else if(Month==12){ return "December";}
+        else return "";
+    }
+    
+    //Method for showing the salary from June to December.
+    public static void allMonthSalary()
+    {
+        String[] employeeID = new String[40];
+        String[] employeeName = new String[40];
+        String[] employeeBday = new String[40];
+        double[] hourlyRate = new double[40];
+        double[] firstCutoff = new double[40];
+        double[] secondCutoff = new double[40];
+        double firstCutOffNetpay = 0;
+        int count = 0;
+        try 
+       {
+           // READ EMPLOYEE FILE
+           BufferedReader empReader = new BufferedReader(new FileReader(employeeFile));
+           empReader.readLine();       
+           String line;
+           while ((line = empReader.readLine()) != null) 
+           {
+               String[] data = line.split(",");
+               employeeID[count] = data[0];
+               employeeName[count] = data[2] + " " + data[1];
+               employeeBday[count] =data[3];
+               // Always take the LAST column for hourly rate
+               hourlyRate[count] = Double.parseDouble(data[data.length - 1]);
+                System.out.println("******************");
+                System.out.println("Employee No.:"+data[0]);
+                System.out.println( "Employee Name:"+data[1]+", "+data[2]);
+                System.out.println("Birthday:"+data[3]);
+               for(int month=6;month<=12; month++) {oneEmployeeSalary(data[0],month);}
+               count++;
+           }
+           empReader.close();
+       } 
+       catch (IOException e) 
+        {
+         System.out.println("Error reading file.");
+        }
+    }
+}
+
